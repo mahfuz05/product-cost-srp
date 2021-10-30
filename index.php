@@ -2,20 +2,34 @@
 
 declare(strict_types=1);
 
+use App\Entity\Product;
+use App\Entity\Seller;
+use App\Math\Utils;
+use App\Shipping\CostCalculator;
+use App\Shipping\CostCalculator\DHLCalculator;
+use App\Shipping\CostCalculator\FedexCalculator;
+use App\Shipping\CostCalculator\PathaoCalculator;
+use App\ValueObject\Dimension;
+use App\ValueObject\Weight;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-use App\DHLCalculator;
-use App\Dimention;
-use App\FedexCalculator;
-use App\Product;
-use App\Weight;
+$mathUtils = new Utils();
+$calculators = [
+    'dhl' => new DHLCalculator($mathUtils),
+    'fedex' => new FedexCalculator($mathUtils),
+    'pathao' => new PathaoCalculator(),
+];
 
-$dimention = new Dimention(2, 3, 1);
-$weight = new Weight(1, 2);
+$costCalculator = new CostCalculator($calculators);
 
-$product = new Product($dimention, $weight);
+$selectedShippingMethod = 'pathao';
+$product = (new Product(new Dimension(2, 4, 1), new Weight(5)))
+    ->setSeller(
+        (new Seller())->setDistrict('Chattogram')
+    )
+;
 
-$dhl = new DHLCalculator($product);
-$fedex = new FedexCalculator($product);
+$cost = $costCalculator->calculate($selectedShippingMethod, $product);
 
-var_dump($dhl->getCost());
+echo $cost . PHP_EOL;
