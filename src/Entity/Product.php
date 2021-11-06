@@ -13,12 +13,6 @@ class Product
     private Weight $weight;
     private Seller $seller;
 
-    function __construct(Dimension $dimension, Weight $weight)
-    {
-        $this->dimension = $dimension;
-        $this->weight = $weight;
-    }
-
     public function setSeller(Seller $seller): self
     {
         $this->seller = $seller;

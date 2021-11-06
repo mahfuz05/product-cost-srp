@@ -6,16 +6,17 @@ namespace App\Shipping;
 
 use App\Entity\Product;
 use App\Shipping\CostCalculator\CalculatorInterface;
+use InvalidArgumentException;
 
 class CostCalculator
 {
     /**
-     * @var array<string, CalculatorInterface>
+     * @var CalculatorInterface[]
      */
     private array $calculators;
 
     /**
-     * @param array<string, CalculatorInterface> $calculators
+     * @param CalculatorInterface[] $calculators
      */
     public function __construct(array $calculators)
     {
@@ -24,6 +25,12 @@ class CostCalculator
 
     public function calculate(string $shippingMethod, Product $product): float
     {
-        return $this->calculators[$shippingMethod]->getCost($product);
+        foreach ($this->calculators as $calculator) {
+            if ($calculator->supports($shippingMethod, $product)) {
+                return $calculator->getCost($product);
+            }
+        }
+
+        throw new InvalidArgumentException('');
     }
 }
