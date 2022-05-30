@@ -16,6 +16,11 @@ class DHLCalculator implements CalculatorInterface
         $this->mathUtils = $mathUtils;
     }
 
+    public function supports(string $method, Product $product): bool
+    {
+        return $method === 'dhl';
+    }
+
     public function getCost(Product $product): float
     {
         return $this->mathUtils->calculateVolume($product->getDimension()) * 3 +

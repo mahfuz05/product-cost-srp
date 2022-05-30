@@ -8,6 +8,6 @@ use App\Entity\Product;
 
 interface CalculatorInterface
 {
-    #public function supports(Product $product): bool;
+    public function supports(string $method, Product $product): bool;
     public function getCost(Product $product): float;
 }
